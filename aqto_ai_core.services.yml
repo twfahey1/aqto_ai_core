@@ -1,0 +1,8 @@
+services:
+  aqto_ai_core.site_actions_manager:
+    class: Drupal\aqto_ai_core\SiteActionsManager
+    arguments: ['@http_client', '@aqto_ai_core.utilities']
+
+  aqto_ai_core.utilities:
+    class: Drupal\aqto_ai_core\Utilities
+    arguments: ['@config.factory']

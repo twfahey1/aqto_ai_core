@@ -1,0 +1,4 @@
+administer aqto_ai_core configuration:
+  title: 'Administer aqto_ai_core configuration'
+  description: 'Access to configure the core of Aqto AI functionality.'
+  restrict access: true

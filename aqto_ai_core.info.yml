@@ -1,0 +1,5 @@
+name: 'Aqto AI Core'
+type: module
+description: 'Provides core functionality for Aqto AI integrations.'
+package: Custom
+core_version_requirement: ^10 || ^11

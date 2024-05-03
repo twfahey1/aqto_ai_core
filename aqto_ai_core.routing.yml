@@ -1,0 +1,7 @@
+aqto_ai_core.test:
+  path: '/aqto-ai-core/test'
+  defaults:
+    _title: 'Test'
+    _form: 'Drupal\aqto_ai_core\Form\TestForm'
+  requirements:
+    _permission: 'administer aqto_ai_core configuration'
