@@ -61,7 +61,10 @@ final class TestForm extends FormBase {
     $message = $form_state->getValue('message');
     $siteActionsManager = \Drupal::service('aqto_ai_core.site_actions_manager');
     $actionTaken = $siteActionsManager->askQuestion($message);
-    $response->addCommand(new HtmlCommand('#message-output', $this->t('Action taken: @action', ['@action' => $actionTaken['description']])));
+    $response->addCommand(new HtmlCommand('#message-output', $this->t('Action taken: @action, status: @status', [
+      '@action' => $actionTaken['action'],
+      '@status' => $actionTaken['status'],
+    ])));
     return $response;
   }
 

@@ -42,6 +42,19 @@ final class SiteActionsManager {
   }
 
   /**
+   * Returns a standardized array of a "result" from an action taken. 
+   * 
+   * We have an arg of some data chunk that we can return as well as the "status".
+   */
+  public function getStandardizedResult($action, $data, $status = 'success') {
+    return [
+      'action' => $action,
+      'status' => $status,
+      'data' => $data,
+    ];
+  }
+
+  /**
    * A helper that takes a question as input and gets the feedback from openAI on which of the available actions would apply. Then, we get back the answer and apply the callback.
    */
   public function askQuestion(string $question) {
@@ -74,6 +87,7 @@ final class SiteActionsManager {
     $nodeData['status'] = 1;
     $node = \Drupal::entityTypeManager()->getStorage('node')->create($nodeData);
     $node->save();
+    return $this->getStandardizedResult('createFunRandomArticle', $nodeData);
   }
 
   /**
@@ -92,7 +106,7 @@ final class SiteActionsManager {
       $node = \Drupal::entityTypeManager()->getStorage('node')->create($nodeDatum);
       $node->save();
     }
-    return $nodeData;
+    return $this->getStandardizedResult('createMultipleArticles', $nodeData);
     
   }
   
