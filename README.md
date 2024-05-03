@@ -1,3 +1,5 @@
+![Aqto AI Core](logo.webp)
+
 ## INTRODUCTION
 
 The Aqto AI Core module provides a base for AI integrations in Drupal 10.
