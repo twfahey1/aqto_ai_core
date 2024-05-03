@@ -1,0 +1,16 @@
+{
+    "name": "twfahey1/aqto_ai_core",
+    "type": "drupal-module",
+    "description": "A Drupal module which provides a base for AI functionality for Aqto projects.",
+    "keywords": ["Drupal", "module"],
+    "homepage": "https://github.com/twfahey1/aqto_ai_core",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Tyler Fahey",
+            "email": "twfahey1@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
