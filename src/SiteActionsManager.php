@@ -75,7 +75,7 @@ final class SiteActionsManager {
   public function askQuestion(string $question) {
     $all_actions = $this->listActions();
     $all_actions_in_json = json_encode($all_actions);
-    $prompt = "You need to give us clarification on which of the possible actions to take based on the question. The actions data is like this: $all_actions_in_json. The question is: $question. Feel free to reply with the 'error' if there is no action that applies. Provide json with func_name, and args array if applicable.";
+    $prompt = "You need to give us clarification on which of the possible actions to take based on the question. The actions data is like this: $all_actions_in_json. The question is: $question. Feel free to reply with the 'error' if there is no action that applies. Provide json with func_name, service_name and method_name, and args array if applicable. Consider extra_context if available";
     $response = $this->utilities->getOpenAiResponse($prompt);
     $response = json_decode($response, TRUE);
     $action_raw_response_data = $response["choices"][0]["message"]["content"];
@@ -83,8 +83,21 @@ final class SiteActionsManager {
     if ($action_data['func_name'] == 'error') {
       return $action_data;
     }
-    $callback = $all_actions[$action_data['func_name']]['callback'];
+    // If we have a service_name and method_name keys, we can programmatically call that service and method with the $args array. Let's just pass the arg values and not use the keys
+    if (isset($action_data['service_name']) && isset($action_data['method_name'])) {
+      $service = \Drupal::service($action_data['service_name']);
+      $method = $action_data['method_name'];
+      $args = $action_data['args'] ?? [];
+      return $service->$method(...$args);
+    }
+    else {
+      $callback = $all_actions[$action_data['func_name']]['callback'];
+    }
     $args = $action_data['args'] ?? [];
+    // Check if the callback is something like "\Drupal::service()", if so, we can call it like that. Otherwise try and invoke on this object.
+    if (strpos($callback, '::') !== FALSE) {
+      return $callback(...$args);
+    }
     return $this->$callback(...$args);
   }
 
