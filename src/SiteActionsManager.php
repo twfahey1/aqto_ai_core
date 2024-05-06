@@ -37,9 +37,24 @@ final class SiteActionsManager {
           'numberToCreate' => 'A number that can be a max of 20.',
         ]
       ],
+      
     ];
+
+    // Lets also gather actions from any modules implementing hook_aqto_ai_actions_available().
+    $moduleHandler = \Drupal::moduleHandler();
+    $modules = $moduleHandler->getModuleList();
+    foreach ($modules as $module => $moduleData) {
+      $hookName = $module . '_aqto_ai_actions_available';
+      if (function_exists($hookName)) {
+        $moduleActions = $hookName();
+        $actions = array_merge($actions, $moduleActions);
+      }
+    }
+    // Lets also gather actions from any modules implementing hook_aqto_ai_actions_available().
     return $actions;
   }
+
+  
 
   /**
    * Returns a standardized array of a "result" from an action taken. 
