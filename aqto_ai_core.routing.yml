@@ -5,3 +5,12 @@ aqto_ai_core.test:
     _form: 'Drupal\aqto_ai_core\Form\TestForm'
   requirements:
     _permission: 'administer aqto_ai_core configuration'
+
+aqto_ai_core.agent:
+  path: '/aqto-ai-core/agent'
+  defaults:
+    _title: 'Agent'
+    _form: 'Drupal\aqto_ai_core\Form\AgentForm'
+  requirements:
+    _permission: 'administer aqto_ai_core configuration'
+

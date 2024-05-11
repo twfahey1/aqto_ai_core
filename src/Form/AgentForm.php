@@ -10,21 +10,25 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 
 /**
- * Provides a Aqto AI Core form with AJAX interactions.
+ * Provides a Aqto AI Core form.
  */
-final class TestForm extends FormBase {
+final class AgentForm extends FormBase
+{
+
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId(): string {
-    return 'aqto_ai_core_test';
+  public function getFormId(): string
+  {
+    return 'aqto_ai_core_agent';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+  public function buildForm(array $form, FormStateInterface $form_state): array
+  {
 
     $form['message'] = [
       '#type' => 'textarea',
@@ -56,7 +60,8 @@ final class TestForm extends FormBase {
   /**
    * AJAX callback to process the input message and interact with AI.
    */
-  public function messageSubmitAjax(array &$form, FormStateInterface $form_state): AjaxResponse {
+  public function messageSubmitAjax(array &$form, FormStateInterface $form_state): AjaxResponse
+  {
     $response = new AjaxResponse();
     $message = $form_state->getValue('message');
     $siteActionsManager = \Drupal::service('aqto_ai_core.site_actions_manager');
@@ -71,7 +76,8 @@ final class TestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
     if (mb_strlen($form_state->getValue('message')) < 10) {
       $form_state->setErrorByName('message', $this->t('Message should be at least 10 characters.'));
     }
@@ -80,8 +86,8 @@ final class TestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
+  public function submitForm(array &$form, FormStateInterface $form_state): void
+  {
     // We might not need this if everything is handled in AJAX
   }
-
 }

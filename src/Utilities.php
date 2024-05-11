@@ -27,6 +27,32 @@ final class Utilities {
   }
 
   /**
+   * A helper that takes a prompt and expects JSON so returns it sanitized and extracted directly.
+   * 
+   */
+  public function getOpenAiJsonResponse(string $prompt): array {
+    $response = $this->getOpenAiResponse($prompt);
+    $response = json_decode($response, TRUE);
+    $action_raw_response_data = $response["choices"][0]["message"]["content"];
+    // Retrieve the raw response data
+    $action_raw_response_data = $response["choices"][0]["message"]["content"];
+  
+    // Remove the initial and closing backticks along with 'json' and extra whitespaces
+    $action_raw_response_data = preg_replace('/^```json|```$/s', '', $action_raw_response_data);
+    $action_raw_response_data = trim($action_raw_response_data);
+
+    // Decode the JSON data
+    $action_data = json_decode($action_raw_response_data, TRUE);
+
+    // Check for JSON errors
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        \Drupal::logger('aqto_ai_core')->error('JSON decode error: ' . json_last_error_msg());
+        return NULL;
+    }
+    return $action_data;
+  }
+
+  /**
    * Helper that takes an initial prompt as a string, makes request to OpenAI API.
    */
   public function getOpenAiResponse(string $prompt): string {
