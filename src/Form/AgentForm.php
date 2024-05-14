@@ -35,6 +35,9 @@ final class AgentForm extends FormBase
       '#title' => $this->t('Message'),
       '#required' => TRUE,
       '#description' => $this->t('What do you want to do?'),
+      // Let's add a suffix where we put a nicely styled small description that indicates: "You can ask for things like 'Let\'s make a new module called my_custom_module'""
+      '#suffix' => '<div class="text-sm text-gray-600">You can ask for things like "Let\'s make a new module called my_custom_module"</div>',
+      
     ];
 
     $form['actions'] = [
