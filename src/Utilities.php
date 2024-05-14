@@ -59,7 +59,7 @@ final class Utilities {
     $apiKey = $this->getOpenAiApiKeyFromConfig();
     $url = "https://api.openai.com/v1/chat/completions";
     $data = [
-      "model" => "gpt-4-turbo",
+      "model" => "gpt-4o",
       "messages" => [
         [
           "role" => "user",
