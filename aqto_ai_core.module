@@ -4,3 +4,32 @@
  * @file
  * Primary module hooks for Aqto AI Core module.
  */
+
+ /**
+  * Implements hook_aqto_ai_actions_available().
+  *
+  * @return array
+  */
+function aqto_ai_core_aqto_ai_actions_available(): array
+{
+    return [
+        'clear_caches' => [
+            [
+                'description' => 'Clear all caches.',
+                'service_name' => 'aqto_ai_core.site_actions_manager',
+                'method' => 'clearCaches',
+                'args' => [],
+            ],
+        ],
+        'enable_module' => [
+            [
+                'description' => 'Enable a module.',
+                'service_name' => 'aqto_ai_core.site_actions_manager',
+                'method' => 'enableModule',
+                'args' => [
+                    'module_name' => 'The module name',
+                ],
+            ],
+        ],
+    ];
+}

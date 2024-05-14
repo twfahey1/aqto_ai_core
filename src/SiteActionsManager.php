@@ -158,4 +158,25 @@ if ($action_data === NULL) {
     }
     return $this->getStandardizedResult('createMultipleArticles', $nodeData);
   }
+
+  /**
+   * A clearCaches method that replicates a core cache rebuild op.
+   */
+  public function clearCaches()
+  {
+    drupal_flush_all_caches();
+    return $this->getStandardizedResult('clearCaches', 'Caches cleared');
+  }
+
+  /**
+   * A method that takes module_name and enables.
+   * 
+   * @param string $module_name
+   * The name of the module to enable.
+   */
+  public function enableModule(string $module_name)
+  {
+    \Drupal::service('module_installer')->install([$module_name], TRUE);
+    return $this->getStandardizedResult('enableModule', $module_name);
+  }
 }
