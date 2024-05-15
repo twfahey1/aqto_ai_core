@@ -13,6 +13,9 @@ use Psr\Http\Client\ClientInterface;
 final class SiteActionsManager
 {
 
+
+  use SiteActionsTrait;
+  
   /**
    * Constructs a SiteActionsManager object.
    */
@@ -20,6 +23,7 @@ final class SiteActionsManager
     private readonly ClientInterface $httpClient,
     private readonly Utilities $utilities,
   ) {
+
   }
 
   /**
@@ -61,19 +65,6 @@ final class SiteActionsManager
 
 
 
-  /**
-   * Returns a standardized array of a "result" from an action taken. 
-   * 
-   * We have an arg of some data chunk that we can return as well as the "status".
-   */
-  public function getStandardizedResult($action, $data, $status = 'success')
-  {
-    return [
-      'action' => $action,
-      'status' => $status,
-      'data' => $data,
-    ];
-  }
 
   /**
    * A public helper to give access ot the utilities
@@ -94,13 +85,13 @@ final class SiteActionsManager
     $action_data = $this->utilities->getOpenAiJsonResponse($prompt);
 
 
-if ($action_data === NULL) {
-    // Handle error if JSON is still not decodable
-    \Drupal::logger('aqto_ai_core')->error('Failed to decode JSON: ' . json_last_error_msg());
-} else {
-    // Proceed with using $action_data
-    \Drupal::logger('aqto_ai_core')->info('Decoded JSON data: ' . print_r($action_data, TRUE));
-}
+    if ($action_data === NULL) {
+        // Handle error if JSON is still not decodable
+        \Drupal::logger('aqto_ai_core')->error('Failed to decode JSON: ' . json_last_error_msg());
+    } else {
+        // Proceed with using $action_data
+        \Drupal::logger('aqto_ai_core')->info('Decoded JSON data: ' . print_r($action_data, TRUE));
+    }
     if ($action_data['func_name'] == 'error') {
       return $action_data;
     }
