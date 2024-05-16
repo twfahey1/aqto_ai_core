@@ -77,12 +77,12 @@ final class SiteActionsManager
   /**
    * A helper that takes a question as input and gets the feedback from openAI on which of the available actions would apply. Then, we get back the answer and apply the callback.
    */
-  public function invokeActionableQuestion(string $question)
+  public function invokeActionableQuestion(string $question, string $model = "gpt-4o")
   {
     $all_actions = $this->listActions();
     $all_actions_in_json = json_encode($all_actions);
     $prompt = "You must provide just a single string response. You need to give us clarification on which of the possible actions to take based on the question. The actions data is like this: $all_actions_in_json. The question is: $question. Feel free to reply with the 'error' if there is no action that applies. Provide json with func_name, service_name and method_name, and args array if applicable. Consider extra_context if available";
-    $action_data = $this->utilities->getOpenAiJsonResponse($prompt);
+    $action_data = $this->utilities->getOpenAiJsonResponse($prompt, $model);
 
 
     if ($action_data === NULL) {
