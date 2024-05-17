@@ -170,4 +170,50 @@ final class SiteActionsManager
     \Drupal::service('module_installer')->install([$module_name], TRUE);
     return $this->getStandardizedResult('enableModule', $module_name);
   }
+
+  /**
+   * A method that takes menu_name and menu_data and creates menu links.
+   * 
+   * @param string $menu_name
+   * The name of the menu to create links in.
+   * 
+   * @param array $menu_data
+   * An array of title -> url data.
+   * 
+   * @return array
+   * An array of the created menu links.
+   *
+   */
+  public function makeMenuLinks(string $menu_name, array $menu_data)
+  {
+    // The menu name is coming from natural language request from user. We want to load all available menus, then use the askOpenAi method to get a single response based on the natural provided menu and what is available, and provide best guess or error if no available menu, to return just the machine name of menu we need.
+    $allMenus = \Drupal::entityTypeManager()->getStorage('menu')->loadMultiple();
+    $allMenuNames = [];
+    foreach ($allMenus as $menu) {
+      $allMenuNames[$menu->id()] = $menu->label();
+    }
+    $prompt = "We have received a user query, and have the menu_name that we need to figure out which menu they might mean from our current available menus. THe menus we currently have, keyed by their ID and label, are: " . json_encode($allMenuNames) . ". The menu_name we have from the user to update is: $menu_name. Please provide the machine name of the menu that you think the user is referring to. Provide your answer strictly as a machine_name of the menu, OR the string 'error' if no menu applies.";
+    $response = $this->utilities->getOpenAiResponse($prompt);
+    $response = json_decode($response, TRUE);
+    $menu_name = $response["choices"][0]["message"]["content"];
+    if ($menu_name == 'error') {
+      return $this->getStandardizedResult('makeMenuLinks', 'No menu found');
+    }
+
+    $menuLinks = [];
+    $menu = \Drupal::entityTypeManager()->getStorage('menu')->load($menu_name);
+    foreach ($menu_data as $title => $url) {
+      $menuLink = \Drupal::entityTypeManager()->getStorage('menu_link_content')->create([
+        'title' => $title,
+        'link' => ['uri' => $url],
+        'menu_name' => $menu_name,
+      ]);
+      $menuLink->save();
+      $menuLinks[] = $menuLink;
+    }
+    // Lets flush caches now
+    drupal_flush_all_caches();
+    return $this->getStandardizedResult('makeMenuLinks', $menuLinks);
+  }
+
 }

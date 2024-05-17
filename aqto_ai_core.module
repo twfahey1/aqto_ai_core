@@ -31,5 +31,19 @@ function aqto_ai_core_aqto_ai_actions_available(): array
                 ],
             ],
         ],
+        'make_main_menu_links' => [
+            [
+                'description' => 'Make one or more menu links from provided menu name, and then menu_data array of title -> url data.',
+                'service_name' => 'aqto_ai_core.site_actions_manager',
+                'method' => 'makeMenuLinks',
+                'args' => [
+                    'menu_name' => 'The menu name',
+                    'menu_data' => [
+                        'title' => 'url',
+                    ],
+                ],
+            ],
+        ],
+        
     ];
 }
