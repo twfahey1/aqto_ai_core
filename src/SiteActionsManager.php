@@ -31,23 +31,8 @@ final class SiteActionsManager
    */
   public function listActions()
   {
-    // Things that the manager can do. First, lets have "Create a new node".
-    $actions = [
-      'create_fun_random_article' => [
-        'description' => 'Create a new article with a fun title and body about a random topic from health, science, or math.',
-        'callback' => 'createFunRandomArticle',
-      ],
-      'create_multiple_articles' => [
-        'description' => 'Create multiple articles with fun titles and bodies about random topics from health, science, or math.',
-        'callback' => 'createMultipleArticles',
-        'args' => [
-          'numberToCreate' => 'A number that can be a max of 20.',
-        ]
-      ],
-      
-
-
-    ];
+    // Things that the manager can do provided by other modules and aqto_ai_core itself.
+    $actions = [];
 
     // Lets also gather actions from any modules implementing hook_aqto_ai_actions_available().
     $moduleHandler = \Drupal::moduleHandler();
@@ -138,9 +123,8 @@ final class SiteActionsManager
   public function createMultipleArticles(int $numberToCreate = 10)
   {
     $prompt = "You are creating multiple nodes with fun titles and bodies about random topics from health, science, or math. Provide JSON formatted data with information for $numberToCreate nodes. The json should have objects where each of the keys should be - title and body for each of the nodes. So the object should be like this: [{\"title\": \"Your title here\", \"body\": \"Your body here\"}, {\"title\": \"Your title here\", \"body\": \"Your body here\"}, ...]";
-    $response = $this->utilities->getOpenAiResponse($prompt);
-    $response = json_decode($response, TRUE);
-    $nodeData = json_decode($response["choices"][0]["message"]["content"], TRUE);
+    $nodeData = $this->utilities->getOpenAiJsonResponse($prompt);
+    
     foreach ($nodeData as $nodeDatum) {
       $nodeDatum['type'] = 'article';
       $nodeDatum['status'] = 1;
@@ -160,15 +144,43 @@ final class SiteActionsManager
   }
 
   /**
-   * A method that takes module_name and enables.
+   * A method that takes module_names array of module and enable each with deps.
    * 
-   * @param string $module_name
-   * The name of the module to enable.
+   * @param array $module_names
+   * An array of module names to enable.
+   * 
+   * @return array
+   * An array of the enabled modules.
    */
-  public function enableModule(string $module_name)
+  public function enableModules(array $module_names)
   {
-    \Drupal::service('module_installer')->install([$module_name], TRUE);
-    return $this->getStandardizedResult('enableModule', $module_name);
+    $moduleHandler = \Drupal::service('module_handler');
+    $enabledModules = [];
+    foreach ($module_names as $module_name) {
+      $moduleHandler->install([$module_name]);
+      $enabledModules[] = $module_name;
+    }
+    return $this->getStandardizedResult('enableModules', $enabledModules);
+  }
+
+  /**
+   * A method that takes module_names array of module and disables each.
+   * 
+   * @param array $module_names
+   * An array of module names to disable.
+   * 
+   * @return array
+   * An array of the disabled modules.
+   */
+  public function disableModules(array $module_names)
+  {
+    $moduleHandler = \Drupal::service('module_handler');
+    $disabledModules = [];
+    foreach ($module_names as $module_name) {
+      $moduleHandler->uninstall([$module_name]);
+      $disabledModules[] = $module_name;
+    }
+    return $this->getStandardizedResult('disableModules', $disabledModules);
   }
 
   /**

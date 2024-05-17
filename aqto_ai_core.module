@@ -5,11 +5,11 @@
  * Primary module hooks for Aqto AI Core module.
  */
 
- /**
-  * Implements hook_aqto_ai_actions_available().
-  *
-  * @return array
-  */
+/**
+ * Implements hook_aqto_ai_actions_available().
+ *
+ * @return array
+ */
 function aqto_ai_core_aqto_ai_actions_available(): array
 {
     return [
@@ -21,13 +21,27 @@ function aqto_ai_core_aqto_ai_actions_available(): array
                 'args' => [],
             ],
         ],
-        'enable_module' => [
+        'enable_modules' => [
             [
-                'description' => 'Enable a module.',
+                'description' => 'Enable one or more modules.',
                 'service_name' => 'aqto_ai_core.site_actions_manager',
-                'method' => 'enableModule',
+                'method' => 'enableModules',
                 'args' => [
-                    'module_name' => 'The module name',
+                    'module_names' => [
+                        'module_name',
+                    ],
+                ],
+            ],
+        ],
+        'disable_modules' => [
+            [
+                'description' => 'Disable one or more modules.',
+                'service_name' => 'aqto_ai_core.site_actions_manager',
+                'method' => 'disableModules',
+                'args' => [
+                    'module_names' => [
+                        'module_name',
+                    ],
                 ],
             ],
         ],
@@ -54,6 +68,22 @@ function aqto_ai_core_aqto_ai_actions_available(): array
                 ],
             ],
         ],
-        
+        'create_new_random_article' => [
+            'description' => 'Create a new article with a fun title and body about a random topic from health, science, or math.',
+            'service_name' => 'aqto_ai_core.site_actions_manager',
+            'method' => 'createMultipleArticles',
+            'args' => [
+                'numberToCreate' => 'always 1 in this case',
+            ]
+        ],
+        'create_multiple_new_random_articles' => [
+            'description' => 'Create multiple articles with fun titles and bodies about random topics from health, science, or math.',
+            'service_name' => 'aqto_ai_core.site_actions_manager',
+            'method' => 'createMultipleArticles',
+            'args' => [
+                'numberToCreate' => 'A number that can be a max of 20.',
+            ]
+        ],
+
     ];
 }
