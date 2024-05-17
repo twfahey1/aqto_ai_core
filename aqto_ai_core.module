@@ -27,9 +27,9 @@ function aqto_ai_core_aqto_ai_actions_available(): array
                 'service_name' => 'aqto_ai_core.site_actions_manager',
                 'method' => 'enableModules',
                 'args' => [
-                    'module_names' => [
-                        'module_name',
-                    ],
+                    'module_names' =>
+                    'A general description provided by user of the module(s) to enable.',
+
                 ],
             ],
         ],
@@ -37,11 +37,9 @@ function aqto_ai_core_aqto_ai_actions_available(): array
             [
                 'description' => 'Disable one or more modules.',
                 'service_name' => 'aqto_ai_core.site_actions_manager',
-                'method' => 'disableModules',
+                'method' => 'disableAndUninstallModules',
                 'args' => [
-                    'module_names' => [
-                        'module_name',
-                    ],
+                    'module_names' => 'A general description provided by user of the module(s) to enable.',
                 ],
             ],
         ],
@@ -83,6 +81,12 @@ function aqto_ai_core_aqto_ai_actions_available(): array
             'args' => [
                 'numberToCreate' => 'A number that can be a max of 20.',
             ]
+        ],
+        'get_enabled_modules_report' => [
+            'description' => 'Get a report of all enabled modules.',
+            'service_name' => 'aqto_ai_core.site_actions_manager',
+            'method' => 'generateEnabledModulesReport',
+            'args' => [],
         ],
 
     ];

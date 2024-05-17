@@ -15,7 +15,7 @@ final class SiteActionsManager
 
 
   use SiteActionsTrait;
-  
+
   /**
    * Constructs a SiteActionsManager object.
    */
@@ -23,7 +23,6 @@ final class SiteActionsManager
     private readonly ClientInterface $httpClient,
     private readonly Utilities $utilities,
   ) {
-
   }
 
   /**
@@ -71,11 +70,11 @@ final class SiteActionsManager
 
 
     if ($action_data === NULL) {
-        // Handle error if JSON is still not decodable
-        \Drupal::logger('aqto_ai_core')->error('Failed to decode JSON: ' . json_last_error_msg());
+      // Handle error if JSON is still not decodable
+      \Drupal::logger('aqto_ai_core')->error('Failed to decode JSON: ' . json_last_error_msg());
     } else {
-        // Proceed with using $action_data
-        \Drupal::logger('aqto_ai_core')->info('Decoded JSON data: ' . print_r($action_data, TRUE));
+      // Proceed with using $action_data
+      \Drupal::logger('aqto_ai_core')->info('Decoded JSON data: ' . print_r($action_data, TRUE));
     }
     if ($action_data['func_name'] == 'error') {
       return $action_data;
@@ -124,7 +123,7 @@ final class SiteActionsManager
   {
     $prompt = "You are creating multiple nodes with fun titles and bodies about random topics from health, science, or math. Provide JSON formatted data with information for $numberToCreate nodes. The json should have objects where each of the keys should be - title and body for each of the nodes. So the object should be like this: [{\"title\": \"Your title here\", \"body\": \"Your body here\"}, {\"title\": \"Your title here\", \"body\": \"Your body here\"}, ...]";
     $nodeData = $this->utilities->getOpenAiJsonResponse($prompt);
-    
+
     foreach ($nodeData as $nodeDatum) {
       $nodeDatum['type'] = 'article';
       $nodeDatum['status'] = 1;
@@ -146,14 +145,15 @@ final class SiteActionsManager
   /**
    * A method that takes module_names array of module and enable each with deps.
    * 
-   * @param array $module_names
-   * An array of module names to enable.
+   * @param string $requested_modules
+   * A natural language or other structure of the modules to work on. Could be specific or generic.
    * 
    * @return array
    * An array of the enabled modules.
    */
-  public function enableModules(array $module_names)
+  public function enableModules(string $module_names)
   {
+    $module_names = $this->figureOutWhatModulesToWorkOn($module_names);
     $moduleHandler = \Drupal::service('module_handler');
     $enabledModules = [];
     foreach ($module_names as $module_name) {
@@ -166,21 +166,71 @@ final class SiteActionsManager
   /**
    * A method that takes module_names array of module and disables each.
    * 
-   * @param array $module_names
-   * An array of module names to disable.
+   * @param string $requested_modules
+   * A natural language or other structure of the modules to work on. Could be specific or generic.
    * 
    * @return array
    * An array of the disabled modules.
    */
-  public function disableModules(array $module_names)
+  public function disableAndUninstallModules(string $module_names)
   {
+    $module_names = $this->figureOutWhatModulesToWorkOn($module_names);
     $moduleHandler = \Drupal::service('module_handler');
+    $moduleInstaller = \Drupal::service('module_installer');
     $disabledModules = [];
+    $uninstalledModules = [];
+
     foreach ($module_names as $module_name) {
-      $moduleHandler->uninstall([$module_name]);
-      $disabledModules[] = $module_name;
+      if ($moduleHandler->moduleExists($module_name)) {
+        // Disable the module first
+        $moduleInstaller->uninstall([$module_name], FALSE);
+        $disabledModules[] = $module_name;
+      }
     }
-    return $this->getStandardizedResult('disableModules', $disabledModules);
+
+    foreach ($module_names as $module_name) {
+      // Uninstall the module
+      $moduleInstaller->uninstall([$module_name]);
+      $uninstalledModules[] = $module_name;
+    }
+
+    // Make a $report variable that will list all the modules that were uninstalled in a nicely styled tailwind div
+    $report = '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert"><strong class="font-bold">Success!</strong><span class="block sm:inline"> The following modules were uninstalled: ' . implode(', ', $uninstalledModules) . '</span></div>';
+
+    return $this->getStandardizedResult('disableAndUninstallModules', $uninstalledModules, $report);
+  }
+
+  /**
+   * Generates a report of all the current enabled modules on site.
+   */
+  public function generateEnabledModulesReport()
+  {
+    $allModules = \Drupal::moduleHandler()->getModuleList();
+    $enabledModules = [];
+    foreach ($allModules as $module => $moduleData) {
+      $enabledModules[] = $module;
+    }
+    $report = '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert"><strong class="font-bold">Success!</strong><span class="block sm:inline"> The following modules are enabled: ' . implode(', ', $enabledModules) . '</span></div>';
+    return $this->getStandardizedResult('generateEnabledModulesReport', $enabledModules, 'success', $report);
+  }
+
+
+  /**
+   * Gets a list of all applicable site modules based on the natural language input. Like if user provides us with "Disable taht admin toolbar module", or  "All modules that start with the letter 't' disable!", we figure out which possible ones meet the criteria via query.
+   * 
+   * @param string $requested_modules
+   * A natural language or other structure of the modules to work on. Could be specific or generic.
+   * 
+   * @return array
+   * An array of the validated module names.
+   */
+  public function figureOutWhatModulesToWorkOn(string $requested_modules)
+  {
+    $allModules = \Drupal::moduleHandler()->getModuleList();
+    // Lets use openAI query to ask to compare rqeusted against all, and provide json response of valid modules.
+    $prompt = "We have received a user query, and have the module_names that we need to figure out which modules they might mean from our current available modules. The modules we currently have are: " . json_encode(array_keys($allModules)) . ". The module_names or a general inclination of the modules described that we have from the user to figure out are: " . $requested_modules . ". Please provide the machine names of the modules that you think the user is referring to. Provide your answer strictly as a JSON array of machine_names of the modules, OR the string 'error' if no modules apply.";
+    $response = $this->utilities->getOpenAiJsonResponse($prompt);
+    return $response;
   }
 
   /**
@@ -241,5 +291,4 @@ final class SiteActionsManager
     $config->save();
     return $this->getStandardizedResult('updateSiteName', $site_name);
   }
-
 }
