@@ -10,6 +10,7 @@ use Drupal\Core\Block\BlockBase;
  * @Block(
  *   id = "aqto_ai_core_agent",
  *   admin_label = @Translation("Aqto AI Agent"),
+ *   category = @Translation("Aqto AI"),
  * )
  */
 class AgentFormBlock extends BlockBase {

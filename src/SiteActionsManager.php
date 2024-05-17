@@ -291,4 +291,20 @@ final class SiteActionsManager
     $config->save();
     return $this->getStandardizedResult('updateSiteName', $site_name);
   }
+
+  // Add a listActions that just lists all the keys and descriptions of the actions available.
+  public function get_available_actions_with_descriptions() {
+    $actions = $this->listActions();
+    $actions_with_descriptions = [];
+    foreach ($actions as $action => $actionData) {
+      $actions_with_descriptions[$action] = $actionData['description'];
+    }
+    // Get some nice html from $actions_with_descriptions via openAI
+    $prompt = "We have received a user query to list all the available actions with descriptions. The actions we currently have are: " . json_encode($actions_with_descriptions) . ". Return a JSON ONLY with a 'report_html' key with the value is a Tailwind based html of the report of actions available";
+    $report_response = $this->utilities->getOpenAiJsonResponse($prompt);
+    $report_html = $report_response['report_html'];
+
+    return $this->getStandardizedResult('get_available_actions_with_descriptions', $actions_with_descriptions, 'success', $report_html);
+
+  }
 }

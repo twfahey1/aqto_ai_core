@@ -88,6 +88,12 @@ function aqto_ai_core_aqto_ai_actions_available(): array
             'method' => 'generateEnabledModulesReport',
             'args' => [],
         ],
+        'get_available_actions_with_descriptions' => [
+            'description' => 'Get a list of all available actions with descriptions.',
+            'service_name' => 'aqto_ai_core.site_actions_manager',
+            'method' => 'get_available_actions_with_descriptions',
+            'args' => [],
+        ],
 
     ];
 }
