@@ -44,6 +44,16 @@ function aqto_ai_core_aqto_ai_actions_available(): array
                 ],
             ],
         ],
+        'update_site_name' => [
+            [
+                'description' => 'Update the site name.',
+                'service_name' => 'aqto_ai_core.site_actions_manager',
+                'method' => 'updateSiteName',
+                'args' => [
+                    'site_name' => 'The new site name',
+                ],
+            ],
+        ],
         
     ];
 }

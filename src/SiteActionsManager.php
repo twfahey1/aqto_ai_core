@@ -216,4 +216,18 @@ final class SiteActionsManager
     return $this->getStandardizedResult('makeMenuLinks', $menuLinks);
   }
 
+  /**
+   * A method that takes site_name and updates the site name.
+   * 
+   * @param string $site_name
+   * The new site name.
+   */
+  public function updateSiteName(string $site_name)
+  {
+    $config = \Drupal::service('config.factory')->getEditable('system.site');
+    $config->set('name', $site_name);
+    $config->save();
+    return $this->getStandardizedResult('updateSiteName', $site_name);
+  }
+
 }
