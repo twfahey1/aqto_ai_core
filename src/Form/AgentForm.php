@@ -33,29 +33,47 @@ final class AgentForm extends FormBase
 
     $form['message'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Message'),
+      '#title' => $this->t('What do you want to do?'),
       '#required' => TRUE,
-      '#description' => $this->t('What do you want to do?'),
+      '#description' => $this->t(''),
       // Let's add a suffix where we put a nicely styled small description that indicates: "You can ask for things like 'Let\'s make a new module called my_custom_module'""
-      '#suffix' => '<div class="text-sm text-gray-600">You can ask for things like "Let\'s make a new module called my_custom_module"</div>',
-
+      '#suffix' => '<div class="text-sm text-gray-600">Ask "What can you do?" for the available actions.</div>',
+      '#attributes' => [
+        'placeholder' => $this->t('Create a new module called "hello_world"'),
+      ],
+      '#weight' => '0',
     ];
 
     $form['actions'] = [
       '#type' => 'actions',
+      '#weight' => '1',
       'submit' => [
         '#type' => 'submit',
         '#value' => $this->t('Send'),
         '#ajax' => [
           'callback' => '::messageSubmitAjax',
-          'wrapper' => 'message-output',
+          'wrapper' => 'aqto-assistant-message-output',
         ],
+      ],
+      // We need to add a margin bottom
+      '#attributes' => [
+        'class' => ['mb-4'],
       ],
     ];
 
-    $form['output'] = [
+    $form['aqto_output_fieldset'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Output'),
+      '#weight' => '2',
+      // We can use Tailwind classes to style the fieldset
+      '#attributes' => [
+        'class' => ['bg-gray-100', 'p-4', 'rounded-lg'],
+      ],
+    ];
+
+    $form['aqto_output_fieldset']['output'] = [
       '#type' => 'markup',
-      '#markup' => '<div id="message-output"></div>',
+      '#markup' => '<div id="aqto-assistant-message-output"></div>',
     ];
 
 
@@ -89,7 +107,7 @@ final class AgentForm extends FormBase
       ];
     }
     $response->addCommand(new HtmlCommand(
-      '#message-output',
+      '#aqto-assistant-message-output',
       $output_render_array
     ));
     
