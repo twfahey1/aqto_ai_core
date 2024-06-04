@@ -77,6 +77,10 @@ final class AgentForm extends FormBase
     ];
 
 
+    // We want to add Tailwind attributes to make our agent window rise above all when it's open. We just need to add classes to the wrapper 
+    $extra_classes =  ['z-50', 'fixed', 'bottom-0', 'right-0', 'bg-white', 'p-4', 'rounded-lg', 'shadow-lg'];
+    // Merge with existing class
+    $form['#attributes']['class'] = array_merge($form['#attributes']['class'], $extra_classes);
 
     return $form;
   }
