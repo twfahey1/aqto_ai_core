@@ -73,7 +73,7 @@ final class AgentForm extends FormBase
 
     $form['aqto_output_fieldset']['output'] = [
       '#type' => 'markup',
-      '#markup' => '<div id="aqto-assistant-message-output"></div>',
+      '#markup' => '<div id="aqto-assistant-message-output" class="max-h-96 overflow-y-auto"></div>',
     ];
 
 
