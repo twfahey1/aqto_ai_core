@@ -2,6 +2,9 @@ agent_form_toggle:
   version: 1.x
   js:
     js/agent_form_toggle.js: {}
+  css:
+    theme:
+      css/agent_form_toggle.css: {}
   dependencies:
     - core/jquery
     - core/drupal

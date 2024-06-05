@@ -1,0 +1,50 @@
+
+  
+  #agent-form-toolbar .resizer {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    z-index: 90;
+  }
+  
+  #agent-form-toolbar .resizer.top,
+  #agent-form-toolbar .resizer.bottom {
+    left: 0;
+    right: 0;
+    height: 5px;
+    cursor: ns-resize;
+  }
+  
+  #agent-form-toolbar .resizer.top {
+    top: 0;
+  }
+  
+  #agent-form-toolbar .resizer.bottom {
+    bottom: 0;
+  }
+  
+  #agent-form-toolbar .resizer.left,
+  #agent-form-toolbar .resizer.right {
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    cursor: ew-resize;
+  }
+  
+  #agent-form-toolbar .resizer.left {
+    left: 0;
+  }
+  
+  #agent-form-toolbar .resizer.right {
+    right: 0;
+  }
+  
+  #agent-form-toolbar .resizer.bottom-right {
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    cursor: se-resize;
+  }
+  
