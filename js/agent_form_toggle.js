@@ -5,6 +5,7 @@
       once('agentFormToggle', '#agent-form-toggle', context).forEach(function (element) {
         $(element).click(function () {
           $('#agent-form-container').toggleClass('hidden');
+          saveToggleState();
         });
       });
 
@@ -26,6 +27,14 @@
         if (savedPosition) {
           $container.css(savedPosition);
         }
+
+        // Restore toggle state from local storage
+        var isFormOpen = localStorage.getItem('agentFormOpen');
+        if (isFormOpen === 'true') {
+          $('#agent-form-container').removeClass('hidden');
+        } else {
+          $('#agent-form-container').addClass('hidden');
+        }
       });
 
       var startX, startY, startWidth, startHeight, startTop, startLeft, isDragging = false;
@@ -41,6 +50,11 @@
           position: 'fixed'
         };
         localStorage.setItem('agentFormPosition', JSON.stringify(position));
+      }
+
+      function saveToggleState() {
+        var isFormOpen = !$('#agent-form-container').hasClass('hidden');
+        localStorage.setItem('agentFormOpen', isFormOpen);
       }
 
       function initResize(e, direction) {
