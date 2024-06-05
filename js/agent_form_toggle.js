@@ -187,6 +187,14 @@
         });
       });
 
+      // Add event listener for the reset button
+      once('resetPosition', '#agent-form-reset', context).forEach(function (element) {
+        var $resetButton = $(element);
+        $resetButton.on('click', function () {
+          resetPosition();
+        });
+      });
+
     }
   };
 })(jQuery, Drupal, once);
