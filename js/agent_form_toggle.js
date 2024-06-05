@@ -4,12 +4,14 @@
 
       once('agentFormToggle', '#agent-form-toggle', context).forEach(function (element) {
         $(element).click(function () {
-          $('#agent-form-container').toggleClass('hidden');
-          saveToggleState();
+          var $container = $('#agent-form-container');
+          $container.toggleClass('hidden');
+          toggleHeight();
         });
       });
 
       var $container;
+      var defaultOpenHeight = '300px'; // Set your default open height here
 
       once('resizerContainer', '#agent-form-toolbar', context).forEach(function (element) {
         $container = $(element);
@@ -26,14 +28,32 @@
         var savedPosition = JSON.parse(localStorage.getItem('agentFormPosition'));
         if (savedPosition) {
           $container.css(savedPosition);
+        } else {
+          $container.css({
+            width: '300px',
+            height: defaultOpenHeight,
+            bottom: '0',
+            right: '0',
+            position: 'fixed'
+          });
         }
 
-        // Restore toggle state from local storage
+        // Restore toggle state and height from local storage
         var isFormOpen = localStorage.getItem('agentFormOpen');
         if (isFormOpen === 'true') {
           $('#agent-form-container').removeClass('hidden');
+          var openHeight = localStorage.getItem('agentFormOpenHeight');
+          if (openHeight) {
+            $container.css('height', openHeight);
+          } else {
+            $container.css('height', defaultOpenHeight);
+          }
         } else {
           $('#agent-form-container').addClass('hidden');
+          var closedHeight = localStorage.getItem('agentFormClosedHeight');
+          if (closedHeight) {
+            $container.css('height', closedHeight);
+          }
         }
       });
 
@@ -50,11 +70,30 @@
           position: 'fixed'
         };
         localStorage.setItem('agentFormPosition', JSON.stringify(position));
+
+        if ($('#agent-form-container').hasClass('hidden')) {
+          localStorage.setItem('agentFormClosedHeight', $container.css('height'));
+        } else {
+          localStorage.setItem('agentFormOpenHeight', $container.css('height'));
+        }
       }
 
       function saveToggleState() {
         var isFormOpen = !$('#agent-form-container').hasClass('hidden');
         localStorage.setItem('agentFormOpen', isFormOpen);
+      }
+
+      function toggleHeight() {
+        var $container = $('#agent-form-toolbar');
+        if ($('#agent-form-container').hasClass('hidden')) {
+          var closedHeight = localStorage.getItem('agentFormClosedHeight');
+          $container.css('height', closedHeight ? closedHeight : '50px'); // Default closed height
+        } else {
+          var openHeight = localStorage.getItem('agentFormOpenHeight');
+          $container.css('height', openHeight ? openHeight : defaultOpenHeight);
+        }
+        saveToggleState();
+        savePosition();
       }
 
       function initResize(e, direction) {
@@ -119,13 +158,13 @@
 
       function resetPosition() {
         $container.css({
-          'width': '300px',
-          'height': '300px',
-          'bottom': '0',
-          'right': '0',
-          'top': '',
-          'left': '',
-          'position': 'fixed'
+          width: '300px',
+          height: defaultOpenHeight,
+          bottom: '0',
+          right: '0',
+          top: '',
+          left: '',
+          position: 'fixed'
         });
         savePosition();
       }
