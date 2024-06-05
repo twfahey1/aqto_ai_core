@@ -265,11 +265,14 @@ final class SiteActionsManager
     $menuLinks = [];
     $menu = \Drupal::entityTypeManager()->getStorage('menu')->load($menu_name);
     foreach ($menu_data as $title => $url) {
+      // Lets make sure the $Url, which could be like "/foo", has to be a proper uri
+      $uri = \Drupal\Core\Url::fromUserInput($url)->toUriString();
       $menuLink = \Drupal::entityTypeManager()->getStorage('menu_link_content')->create([
         'title' => $title,
-        'link' => ['uri' => $url],
+        'link' => ['uri' => $uri],
         'menu_name' => $menu_name,
       ]);
+      
       $menuLink->save();
       $menuLinks[] = $menuLink;
     }
