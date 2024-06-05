@@ -300,7 +300,7 @@ final class SiteActionsManager
       $actions_with_descriptions[$action] = $actionData['description'];
     }
     // Get some nice html from $actions_with_descriptions via openAI
-    $prompt = "We have received a user query to list all the available actions with descriptions. The actions we currently have are: " . json_encode($actions_with_descriptions) . ". Return a JSON ONLY with a 'report_html' key with the value is a Tailwind based html of the report of actions available";
+    $prompt = "We have received a user query to list all the available actions with descriptions. The actions we currently have are: " . json_encode($actions_with_descriptions) . ". Return a JSON ONLY with a 'report_html' key with the value is a Tailwind based html with a a summary of what can be asked given the various actions";
     $report_response = $this->utilities->getOpenAiJsonResponse($prompt);
     $report_html = $report_response['report_html'];
 

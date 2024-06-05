@@ -21,10 +21,14 @@ class AgentFormBlock extends BlockBase {
     $form['#attached']['library'][] = 'aqto_ai_core/agent_form_toggle';
 
     $form['#prefix'] = '
-      <div id="agent-form-toolbar" class="fixed bottom-0 right-0 p-4 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto">
-        <div id="agent-form-toggle" class="mb-2 px-4 py-2 bg-blue-700 text-white rounded cursor-pointer">AqtoAssistant</div>
-        <div id="agent-form-container" class="hidden">
-    ';
+    <div id="agent-form-toolbar" class="fixed bottom-0 right-0 p-4 bg-white border border-gray-200 rounded-lg shadow-lg h-96 overflow-y-auto">
+      <div class="flex flex-col">
+      <div id="agent-form-toggle" class="glowing-button mb-2 px-4 py-2 bg-blue-700 text-white rounded cursor-pointer">AqtoAssistant</div>
+      <div id="agent-form-move" class="w-100 text-xs mb-2 px-4 py-2 bg-green-700 text-white rounded cursor-move">+Move</div>
+      </div>
+      <div id="agent-form-container" class="hidden">
+  ';
+  
     $form['#suffix'] = '
         </div>
       </div>
