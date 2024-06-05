@@ -20,9 +20,28 @@
         $container.append('<div class="resizer top-right"></div>');
         $container.append('<div class="resizer bottom-left"></div>');
         $container.append('<div class="resizer top-left"></div>');
+
+        // Restore position and size from local storage
+        var savedPosition = JSON.parse(localStorage.getItem('agentFormPosition'));
+        if (savedPosition) {
+          $container.css(savedPosition);
+        }
       });
 
       var startX, startY, startWidth, startHeight, startTop, startLeft, isDragging = false;
+
+      function savePosition() {
+        var position = {
+          width: $container.css('width'),
+          height: $container.css('height'),
+          top: $container.css('top'),
+          left: $container.css('left'),
+          bottom: $container.css('bottom'),
+          right: $container.css('right'),
+          position: 'fixed'
+        };
+        localStorage.setItem('agentFormPosition', JSON.stringify(position));
+      }
 
       function initResize(e, direction) {
         e.preventDefault();
@@ -51,6 +70,7 @@
           $container.css('height', startHeight - (e.clientY - startY) + 'px');
           $container.css('top', startTop + (e.clientY - startY) + 'px');
         }
+        savePosition();
       }
 
       function stopResize() {
@@ -73,6 +93,7 @@
         if (isDragging) {
           $container.css('top', startTop + e.clientY - startY + 'px');
           $container.css('left', startLeft + e.clientX - startX + 'px');
+          savePosition();
         }
       }
 
@@ -92,6 +113,7 @@
           'left': '',
           'position': 'fixed'
         });
+        savePosition();
       }
 
       once('resizer', '.resizer', context).forEach(function (element) {
