@@ -2,9 +2,9 @@
   
   #agent-form-toolbar .resizer {
     position: absolute;
-    width: 10px;
-    height: 10px;
-    background: #ccc;
+    width: 5px;
+    height: 5px;
+    background: black;
     z-index: 90;
   }
   

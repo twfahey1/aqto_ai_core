@@ -25,11 +25,15 @@ class AgentFormBlock extends BlockBase {
       <div class="flex flex-col">
         <div id="agent-form-toggle" class="glowing-button mb-2 px-4 py-2 bg-blue-700 text-white rounded cursor-pointer">AqtoAssistant</div>
         <div class="flex flex-row mb-2">
-          <div id="agent-form-move" class="w-100 text-xs px-4 py-2 bg-green-700 text-white rounded cursor-move mr-2">+Move</div>
-          <div id="agent-form-reset" class="w-100 text-xs px-4 py-2 bg-yellow-500 text-black rounded cursor-pointer">Reset</div>
+          <div id="agent-form-reset" class="w-full text-xs px-4 py-2 bg-yellow-500 text-black rounded cursor-pointer">Reset</div>
         </div>
       </div>
+      <div class="move top-left absolute top-0 left-0 w-5 h-5 bg-green-700 text-white flex justify-center items-center cursor-move">+</div>
+      <div class="move top-right absolute top-0 right-0 w-5 h-5 bg-green-700 text-white flex justify-center items-center cursor-move">+</div>
+      <div class="move bottom-left absolute bottom-0 left-0 w-5 h-5 bg-green-700 text-white flex justify-center items-center cursor-move">+</div>
+      <div class="move bottom-right absolute bottom-0 right-0 w-5 h-5 bg-green-700 text-white flex justify-center items-center cursor-move">+</div>
       <div id="agent-form-container" class="hidden">
+ 
   ';
 
     $form['#suffix'] = '

@@ -177,7 +177,7 @@
         });
       });
 
-      once('draggable', '#agent-form-move', context).forEach(function (element) {
+      once('draggable', '.move', context).forEach(function (element) {
         var $moveHandle = $(element);
         $moveHandle.on('mousedown', initDrag);
         $moveHandle.on('click', function (e) {
