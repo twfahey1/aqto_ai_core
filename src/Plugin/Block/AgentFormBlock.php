@@ -16,6 +16,10 @@ use Drupal\Core\Block\BlockBase;
 class AgentFormBlock extends BlockBase {
 
   public function build() {
+    // If current user does not have 'access aqto agent permission, we return empty array.
+    if (!\Drupal::currentUser()->hasPermission('access aqto agent')) {
+      return [];
+    }
     $form = \Drupal::formBuilder()->getForm('Drupal\aqto_ai_core\Form\AgentForm');
     // Add a button to toggle the visibility of the form
     $form['#attached']['library'][] = 'aqto_ai_core/agent_form_toggle';
