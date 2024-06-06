@@ -6,12 +6,13 @@
         $(element).click(function () {
           var $container = $('#agent-form-container');
           $container.toggleClass('hidden');
-          toggleHeight();
+          toggleSize();
         });
       });
 
       var $container;
       var defaultOpenHeight = '300px'; // Set your default open height here
+      var defaultWidth = '300px'; // Set your default width here
 
       once('resizerContainer', '#agent-form-toolbar', context).forEach(function (element) {
         $container = $(element);
@@ -30,7 +31,7 @@
           $container.css(savedPosition);
         } else {
           $container.css({
-            width: '300px',
+            width: defaultWidth,
             height: defaultOpenHeight,
             bottom: '0',
             right: '0',
@@ -48,11 +49,23 @@
           } else {
             $container.css('height', defaultOpenHeight);
           }
+
+          var openWidth = localStorage.getItem('agentFormOpenWidth');
+          if (openWidth) {
+            $container.css('width', openWidth);
+          } else {
+            $container.css('width', defaultWidth);
+          }
         } else {
           $('#agent-form-container').addClass('hidden');
           var closedHeight = localStorage.getItem('agentFormClosedHeight');
           if (closedHeight) {
             $container.css('height', closedHeight);
+          }
+
+          var closedWidth = localStorage.getItem('agentFormClosedWidth');
+          if (closedWidth) {
+            $container.css('width', closedWidth);
           }
         }
       });
@@ -73,8 +86,10 @@
 
         if ($('#agent-form-container').hasClass('hidden')) {
           localStorage.setItem('agentFormClosedHeight', $container.css('height'));
+          localStorage.setItem('agentFormClosedWidth', $container.css('width'));
         } else {
           localStorage.setItem('agentFormOpenHeight', $container.css('height'));
+          localStorage.setItem('agentFormOpenWidth', $container.css('width'));
         }
       }
 
@@ -83,14 +98,22 @@
         localStorage.setItem('agentFormOpen', isFormOpen);
       }
 
-      function toggleHeight() {
+      function toggleSize() {
         var $container = $('#agent-form-toolbar');
         if ($('#agent-form-container').hasClass('hidden')) {
           var closedHeight = localStorage.getItem('agentFormClosedHeight');
-          $container.css('height', closedHeight ? closedHeight : '50px'); // Default closed height
+          var closedWidth = localStorage.getItem('agentFormClosedWidth');
+          $container.css({
+            height: closedHeight ? closedHeight : '50px', // Default closed height
+            width: closedWidth ? closedWidth : defaultWidth
+          });
         } else {
           var openHeight = localStorage.getItem('agentFormOpenHeight');
-          $container.css('height', openHeight ? openHeight : defaultOpenHeight);
+          var openWidth = localStorage.getItem('agentFormOpenWidth');
+          $container.css({
+            height: openHeight ? openHeight : defaultOpenHeight,
+            width: openWidth ? openWidth : defaultWidth
+          });
         }
         saveToggleState();
         savePosition();
@@ -111,7 +134,7 @@
       function doResize(direction, e) {
         if (direction.includes('right')) {
           $container.css('width', startWidth + e.clientX - startX + 'px');
-        } 
+        }
         if (direction.includes('bottom')) {
           $container.css('height', startHeight + e.clientY - startY + 'px');
         }
@@ -158,7 +181,7 @@
 
       function resetPosition() {
         $container.css({
-          width: '300px',
+          width: defaultWidth,
           height: defaultOpenHeight,
           bottom: '0',
           right: '0',
