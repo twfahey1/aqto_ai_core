@@ -16,7 +16,6 @@ use Drupal\Core\Render\Markup;
 final class AgentForm extends FormBase
 {
 
-
   /**
    * {@inheritdoc}
    */
@@ -33,10 +32,7 @@ final class AgentForm extends FormBase
 
     $form['message'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('What do you want to do?'),
-      '#required' => TRUE,
-      '#description' => $this->t(''),
-      // Let's add a suffix where we put a nicely styled small description that indicates: "You can ask for things like 'Let\'s make a new module called my_custom_module'""
+      '#title' => 'What do you want to do?',
       '#suffix' => '<div class="text-sm text-gray-600">Ask "What can you do?" for the available actions.</div>',
       '#attributes' => [
         'placeholder' => $this->t('Create a new module called "hello_world"'),
@@ -55,7 +51,6 @@ final class AgentForm extends FormBase
           'wrapper' => 'aqto-assistant-message-output',
         ],
       ],
-      // We need to add a margin bottom
       '#attributes' => [
         'class' => ['mb-4'],
       ],
@@ -65,7 +60,6 @@ final class AgentForm extends FormBase
       '#type' => 'fieldset',
       '#title' => $this->t('Output'),
       '#weight' => '2',
-      // We can use Tailwind classes to style the fieldset
       '#attributes' => [
         'class' => ['bg-gray-100', 'p-4', 'rounded-lg'],
       ],
@@ -76,11 +70,14 @@ final class AgentForm extends FormBase
       '#markup' => '<div id="aqto-assistant-message-output" class="max-h-100vh overflow-y-auto"></div>',
     ];
 
-
     // We want to add Tailwind attributes to make our agent window rise above all when it's open. We just need to add classes to the wrapper 
-    $extra_classes =  ['z-50', 'fixed', 'bottom-0', 'right-0', 'bg-white', 'p-4', 'rounded-lg', 'shadow-lg'];
+    $extra_classes = ['z-50', 'fixed', 'bottom-0', 'right-0', 'bg-white', 'p-4', 'rounded-lg', 'shadow-lg'];
     // Merge with existing class
-    $form['#attributes']['class'] = array_merge($form['#attributes']['class'], $extra_classes);
+    if (isset($form['#attributes']['class'])) {
+      $form['#attributes']['class'] = array_merge($form['#attributes']['class'], $extra_classes);
+    } else {
+      $form['#attributes']['class'] = $extra_classes;
+    }
 
     return $form;
   }
