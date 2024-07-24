@@ -3,7 +3,7 @@
     attach: function (context, settings) {
 
       once('agentFormToggle', '#agent-form-toggle', context).forEach(function (element) {
-        $(element).click(function () {
+        $(element).on('click', function () {
           var $container = $('#agent-form-container');
           $container.toggleClass('hidden');
           toggleSize();
@@ -121,62 +121,66 @@
 
       function initResize(e, direction) {
         e.preventDefault();
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = e.clientX || e.touches[0].clientX;
+        startY = e.clientY || e.touches[0].clientY;
         startWidth = parseInt(document.defaultView.getComputedStyle($container[0]).width, 10);
         startHeight = parseInt(document.defaultView.getComputedStyle($container[0]).height, 10);
         startTop = parseInt(document.defaultView.getComputedStyle($container[0]).top, 10);
         startLeft = parseInt(document.defaultView.getComputedStyle($container[0]).left, 10);
-        $(document).mousemove(doResize.bind(null, direction));
-        $(document).mouseup(stopResize);
+        $(document).on('mousemove touchmove', doResize.bind(null, direction));
+        $(document).on('mouseup touchend', stopResize);
       }
 
       function doResize(direction, e) {
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
         if (direction.includes('right')) {
-          $container.css('width', startWidth + e.clientX - startX + 'px');
+          $container.css('width', startWidth + clientX - startX + 'px');
         }
         if (direction.includes('bottom')) {
-          $container.css('height', startHeight + e.clientY - startY + 'px');
+          $container.css('height', startHeight + clientY - startY + 'px');
         }
         if (direction.includes('left')) {
-          $container.css('width', startWidth - (e.clientX - startX) + 'px');
-          $container.css('left', startLeft + (e.clientX - startX) + 'px');
+          $container.css('width', startWidth - (clientX - startX) + 'px');
+          $container.css('left', startLeft + (clientX - startX) + 'px');
         }
         if (direction.includes('top')) {
-          $container.css('height', startHeight - (e.clientY - startY) + 'px');
-          $container.css('top', startTop + (e.clientY - startY) + 'px');
+          $container.css('height', startHeight - (clientY - startY) + 'px');
+          $container.css('top', startTop + (clientY - startY) + 'px');
         }
         savePosition();
       }
 
       function stopResize() {
-        $(document).off('mousemove');
-        $(document).off('mouseup');
+        $(document).off('mousemove touchmove');
+        $(document).off('mouseup touchend');
       }
 
       function initDrag(e) {
         e.preventDefault();
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = e.clientX || e.touches[0].clientX;
+        startY = e.clientY || e.touches[0].clientY;
         startTop = parseInt(document.defaultView.getComputedStyle($container[0]).top, 10);
         startLeft = parseInt(document.defaultView.getComputedStyle($container[0]).left, 10);
         isDragging = true;
-        $(document).mousemove(doDrag);
-        $(document).mouseup(stopDrag);
+        $(document).on('mousemove touchmove', doDrag);
+        $(document).on('mouseup touchend', stopDrag);
       }
 
       function doDrag(e) {
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
         if (isDragging) {
-          $container.css('top', startTop + e.clientY - startY + 'px');
-          $container.css('left', startLeft + e.clientX - startX + 'px');
+          $container.css('top', startTop + clientY - startY + 'px');
+          $container.css('left', startLeft + clientX - startX + 'px');
           savePosition();
         }
       }
 
       function stopDrag() {
         isDragging = false;
-        $(document).off('mousemove');
-        $(document).off('mouseup');
+        $(document).off('mousemove touchmove');
+        $(document).off('mouseup touchend');
       }
 
       function resetPosition() {
@@ -195,14 +199,14 @@
       once('resizer', '.resizer', context).forEach(function (element) {
         var $resizer = $(element);
         var direction = $resizer.attr('class').split(' ').pop();
-        $resizer.on('mousedown', function (e) {
+        $resizer.on('mousedown touchstart', function (e) {
           initResize(e, direction);
         });
       });
 
       once('draggable', '.move', context).forEach(function (element) {
         var $moveHandle = $(element);
-        $moveHandle.on('mousedown', initDrag);
+        $moveHandle.on('mousedown touchstart', initDrag);
         $moveHandle.on('click', function (e) {
           if (e.detail === 3) {
             resetPosition();
